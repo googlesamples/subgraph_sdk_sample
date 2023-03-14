@@ -32,19 +32,33 @@
  */
 package com.google.samples.quickstart.subgraph_sdk_sample
 
+import android.content.Intent
 import android.os.Bundle
+import android.os.RemoteException
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.libraries.cloud.telco.subgraph.api.MobileDataPlanClient
 import com.google.android.libraries.cloud.telco.subgraph.api.Subgraph
 import com.google.android.libraries.cloud.telco.subgraph.api.SubgraphNotificationIntent
-import kotlin.String
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
+  private var mobileDataPlanClient: MobileDataPlanClient? = null
+  private var cpid: String? = null
+  val ioscope = CoroutineScope(Job() + Dispatchers.IO)
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
+
     findViewById<View>(R.id.api_button).setOnClickListener {
+      // Simplified code. The SubgraphNotificationIntent parser will throw
+      // IllegalArgumentException. Intents with values are delivered on a fresh Activity
+      // onCreate(), or onNewIntent() depending on the activity launchMode setting.
       val i: SubgraphNotificationIntent = getNotification()
       val payloadDelivered =
         String.format(
@@ -56,7 +70,37 @@ class MainActivity : AppCompatActivity() {
       // Do something with the Third Party Notification intent action, content-type, and
       // payload
       Toast.makeText(applicationContext, payloadDelivered, Toast.LENGTH_LONG).show()
+
+      // Create a MobileDataPlan client with a helper function:
+      mobileDataPlanClient =
+        i.newMobileDataPlanClient(applicationContext)
+
+      // Launch the request for the CPID:
+      getClientSetup(i)
     }
+  }
+
+  private fun getClientSetup(i: SubgraphNotificationIntent) {
+    ioscope.launch {
+      // The remote call getCpid() should run in the background.
+      try {
+        cpid = mobileDataPlanClient?.cpid
+      } catch (ise: IllegalStateException) {
+        ise.printStackTrace()
+      } catch (re: RemoteException) {
+        re.printStackTrace()
+      }
+    }
+  }
+
+  override fun onNewIntent(intent: Intent?) {
+    super.onNewIntent(intent)
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    // Cleanup any Subgraph MobileDataPlanClient SDK resources in use.
+    mobileDataPlanClient?.close()
   }
 
   private fun getNotification(): SubgraphNotificationIntent {

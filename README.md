@@ -24,16 +24,42 @@ Java usage will be very similar.
 The carrier will send a NotifyUser RPC, which will direct the message to the SDK
 that will then launch the destination_package indicated by the RPC call.
 
-This package should be this following target, or any other valid target:
+This package should be this following target, or any other valid target
+configured for your carrier:
 
 com.google.samples.quickstart.subgraph_sdk_sample.MainActivity
 
-It will have a data payload that was sent by the NotifyUser RPC. Details on how
-to send the RPC will be provided at a later time. Once the activity starts,
 
-  Subgraph.fromIntent(intent)
-
+1. This activity will have a data payload that was sent by the NotifyUser RPC.
+Details on how to send the RPC will be provided at a later time. Be sure the
+activity launch mode allows for a completely new intent to be delivered to
+onCreate() and onNewIntent(). Once the new intent arrives:
+~~~~
+var parsedIntent = Subgraph.fromIntent(intent)
+~~~~
 is a helper function that will parse out the contents for use in the app.
+
+2. Obtain an instance of the MobileDataPlanClient from Subgraph. First find
+a valid active SimId (or IccId) from Subscription Manager:
+
+~~~~
+mobileDataPlanClient =
+  parsedIntent.newMobileDataPlanClient(applicationContext)
+~~~~
+
+With this client, the app can get a Carrier Plan ID. Run it in a background
+thread, as it is a remote blocking call.
+~~~~
+launch {
+  var cpid = mobileDataPlanClient.getCpid();
+}
+~~~~
+
+
+2. Also add cleanup to the activity lifecycle, such as at onDestroy()
+~~~~
+mobileDataPlanClient?.close()
+~~~~
 
 This project uses the Gradle build system. To build this project, use the
 `gradlew build` command or use "Import Project" in Android Studio.
@@ -46,17 +72,22 @@ For more resources on learning Android development, visit the
 
 The subgraph_sdk_sample will have this setup already. Subgraph SDK will be in
 the google() repository:
-
+~~~~
     repositories {
         google()
         // ...
     }
+~~~~
 
 In your app directory's build.gradle, add to the dependencies this line:
-
+~~~~
 dependencies {
-  implementation 'com.google.android.libraries.cloud.telco.subgraph:cloud_telco_subgraph:0.0.2'
+  implementation 'com.google.android.libraries.cloud.telco.subgraph:cloud_telco_subgraph:0.5.0'
 }
+~~~~
+
+The android gradle plugin may need to be updated to at least version 7.3.1 when
+the sample is first loaded. Upgrade when prompted by Android Studio.
 
 If the app does not already have an OSS plugin to help with Third Party
 Licenses generation and display, please go here:
