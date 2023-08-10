@@ -24,10 +24,12 @@ Java usage will be very similar.
 The carrier will send a NotifyUser RPC, which will direct the message to the SDK
 that will then launch the destination_package indicated by the RPC call.
 
+The SDK will allow getting the current CPID for the carrier.
+
 This package should be this following target, or any other valid target
 configured for your carrier:
 
-com.google.samples.quickstart.subgraph_sdk_sample.MainActivity
+com.google.samples.quickstart.subgraph_sdk_sample
 
 
 1. This activity will have a data payload that was sent by the NotifyUser RPC.
@@ -39,24 +41,36 @@ var parsedIntent = Subgraph.fromIntent(intent)
 ~~~~
 is a helper function that will parse out the contents for use in the app.
 
-2. Obtain an instance of the MobileDataPlanClient from Subgraph. First find
-a valid active SimId (or IccId) from Subscription Manager:
+1. Obtain an instance of the MobileDataPlanClient from Subgraph.
+See the example in [MainActivity.kt](https://github.com/googlesamples/subgraph_sdk_sample/blob/main/app/src/main/java/com/google/samples/quickstart/subgraph_sdk_sample/MainActivity.kt).
 
-~~~~
-mobileDataPlanClient =
-  parsedIntent.newMobileDataPlanClient(applicationContext)
-~~~~
+It should be created in a background thread, but can be also be stored outside
+that scope.
 
-With this client, the app can get a Carrier Plan ID. Run it in a background
-thread, as it is a remote blocking call.
 ~~~~
 launch {
-  var cpid = mobileDataPlanClient.getCpid();
+  var mobileDataPlanClient =
+    Subgraph.newMobileDataPlanClient(applicationContext, parsedIntent.simId())
 }
 ~~~~
 
+With this client, the app can get the current Carrier Plan ID. Run it in a
+background thread, as it is a blocking call. See sample with a more complete
+example.
 
-2. Also add cleanup to the activity lifecycle, such as at onDestroy()
+~~~~
+launch {
+  var dataPlanIdentifier = mobileDataPlanClient?.cpid
+}
+~~~~
+
+dataPlanIdentifier contains the current cpid() and the simId() corresponding to
+that cpid. updateTime() for that CPID is also available.
+
+Both Kotlin and Java can also use Guava's ListenableFuture with FluentFuture
+or onSuccess callbacks for more thread execution control options.
+
+1. Also add cleanup to the activity lifecycle, such as at onDestroy()
 ~~~~
 mobileDataPlanClient?.close()
 ~~~~
@@ -82,7 +96,7 @@ the google() repository:
 In your app directory's build.gradle, add to the dependencies this line:
 ~~~~
 dependencies {
-  implementation 'com.google.android.libraries.cloud.telco.subgraph:cloud_telco_subgraph:0.5.0'
+  implementation 'com.google.android.libraries.cloud.telco.subgraph:cloud_telco_subgraph:0.5.1'
 }
 ~~~~
 

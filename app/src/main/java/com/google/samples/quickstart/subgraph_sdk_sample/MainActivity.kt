@@ -32,24 +32,27 @@
  */
 package com.google.samples.quickstart.subgraph_sdk_sample
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.RemoteException
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.libraries.cloud.telco.subgraph.api.DataPlanIdentifier
 import com.google.android.libraries.cloud.telco.subgraph.api.MobileDataPlanClient
 import com.google.android.libraries.cloud.telco.subgraph.api.Subgraph
 import com.google.android.libraries.cloud.telco.subgraph.api.SubgraphNotificationIntent
+import com.google.android.libraries.cloud.telco.subgraph.impl.MobileDataPlanClientImpl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
   private var mobileDataPlanClient: MobileDataPlanClient? = null
   private var cpid: String? = null
-  val ioscope = CoroutineScope(Job() + Dispatchers.IO)
+  private val ioscope = CoroutineScope(Job() + Dispatchers.IO)
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -59,37 +62,58 @@ class MainActivity : AppCompatActivity() {
       // Simplified code. The SubgraphNotificationIntent parser will throw
       // IllegalArgumentException. Intents with values are delivered on a fresh Activity
       // onCreate(), or onNewIntent() depending on the activity launchMode setting.
-      val i: SubgraphNotificationIntent = getNotification()
-      val payloadDelivered =
-        String.format(
-          "Intent Action: %s, Content-Type: %s, Payload as String: %s",
-          i.action(),
-          i.contentType(),
-          i.payload()
-        )
-      // Do something with the Third Party Notification intent action, content-type, and
-      // payload
-      Toast.makeText(applicationContext, payloadDelivered, Toast.LENGTH_LONG).show()
+      var i: SubgraphNotificationIntent? = null
+      try {
+        // Show any notifications that have arrived:
+        i = getNotification()
+        val payloadDelivered =
+          String.format(
+            "Intent Action: %s, Content-Type: %s, Payload as String: %s",
+            i.action(),
+            i.contentType(),
+            i.payload()
+          )
+        // Do something with the Third Party Notification intent action, content-type, and
+        // payload
+        Toast.makeText(applicationContext, payloadDelivered, Toast.LENGTH_LONG).show()
+      } catch (iae: IllegalArgumentException) {
+        iae.printStackTrace()
+      } catch (ise: IllegalStateException) {
+        ise.printStackTrace()
+      }
 
-      // Create a MobileDataPlan client with a helper function:
-      mobileDataPlanClient =
-        i.newMobileDataPlanClient(applicationContext)
-
-      // Launch the request for the CPID:
-      getClientSetup(i)
+      // Launch the request for the current CPID, using SubgraphNotificationIntent to get the SimID.
+      if (i != null) {
+        getClientSetup(applicationContext, i)
+      }
     }
   }
 
-  private fun getClientSetup(i: SubgraphNotificationIntent) {
+  private fun getClientSetup(context: Context, i: SubgraphNotificationIntent) {
     ioscope.launch {
-      // The remote call getCpid() should run in the background.
+      // The call getCpid() should run in the background. Post the future results to the UI thread.
+      // Consider Guava's ListenableFuture for an onSuccess callback, depending on app design.
       try {
-        cpid = mobileDataPlanClient?.cpid
+        // Create a MobileDataPlan client with the Subgraph Interface. The SIM ID should be real,
+        // from a source like the SubgraphNotificationIntent or SubscriptionManager.
+        mobileDataPlanClient = Subgraph.newMobileDataPlanClient(context, i.simId())
+
+        var dataPlanIdentifier: DataPlanIdentifier? = mobileDataPlanClient?.cpid
+        if (dataPlanIdentifier == null) {
+          toastToUiThread(context, "Did not receive a CPID yet.")
+          return@launch
+        }
+        toastToUiThread(context, "Cpid received: " + dataPlanIdentifier.cpid() +
+                       ", UpdateTime: " + dataPlanIdentifier.updateTime())
       } catch (ise: IllegalStateException) {
         ise.printStackTrace()
-      } catch (re: RemoteException) {
-        re.printStackTrace()
       }
+    }
+  }
+
+  suspend fun toastToUiThread(context: Context, message: String) {
+    withContext(Dispatchers.Main.immediate) {
+      Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
   }
 
