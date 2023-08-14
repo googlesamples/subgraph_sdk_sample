@@ -33,47 +33,50 @@ com.google.samples.quickstart.subgraph_sdk_sample
 
 
 1. This activity will have a data payload that was sent by the NotifyUser RPC.
-Details on how to send the RPC will be provided at a later time. Be sure the
-activity launch mode allows for a completely new intent to be delivered to
-onCreate() and onNewIntent(). Once the new intent arrives:
-~~~~
-var parsedIntent = Subgraph.fromIntent(intent)
-~~~~
-is a helper function that will parse out the contents for use in the app.
+  Details on how to send the RPC will be provided at a later time. Be sure the
+  activity launch mode allows for a completely new intent to be delivered to
+  onCreate() and onNewIntent(). Once the new intent arrives, the following
+
+  ~~~~
+  var parsedIntent = Subgraph.fromIntent(intent)
+  ~~~~
+
+  is a helper function that will parse out the contents for use in the app.
 
 1. Obtain an instance of the MobileDataPlanClient from Subgraph.
-See the example in [MainActivity.kt](https://github.com/googlesamples/subgraph_sdk_sample/blob/main/app/src/main/java/com/google/samples/quickstart/subgraph_sdk_sample/MainActivity.kt).
+  See the example in [MainActivity.kt](https://github.com/googlesamples/subgraph_sdk_sample/blob/main/app/src/main/java/com/google/samples/quickstart/subgraph_sdk_sample/MainActivity.kt).
 
-It should be created in a background thread, but can be also be stored outside
-that scope.
+  It should be created in a background thread, but can be also be stored outside
+  that scope.
 
-~~~~
-launch {
-  var mobileDataPlanClient =
-    Subgraph.newMobileDataPlanClient(applicationContext, parsedIntent.simId())
-}
-~~~~
+  ~~~~
+  launch {
+    var mobileDataPlanClient =
+      Subgraph.newMobileDataPlanClient(applicationContext, parsedIntent.simId())
+  }
+  ~~~~
 
-With this client, the app can get the current Carrier Plan ID. Run it in a
-background thread, as it is a blocking call. See sample with a more complete
-example.
+  With this client, the app can get the current Carrier Plan ID. Run it in a
+  background thread, as it is a blocking call. See sample with a more complete
+  example.
 
-~~~~
-launch {
-  var dataPlanIdentifier = mobileDataPlanClient?.cpid
-}
-~~~~
+  ~~~~
+  launch {
+    var dataPlanIdentifier = mobileDataPlanClient?.cpid
+  }
+  ~~~~
 
-dataPlanIdentifier contains the current cpid() and the simId() corresponding to
-that cpid. updateTime() for that CPID is also available.
+  dataPlanIdentifier contains the current cpid() and the simId() corresponding to
+  that cpid. updateTime() for that CPID is also available.
 
-Both Kotlin and Java can also use Guava's ListenableFuture with FluentFuture
-or onSuccess callbacks for more thread execution control options.
+  Both Kotlin and Java can also use Guava's ListenableFuture with FluentFuture
+  or onSuccess callbacks for more thread execution control options.
 
 1. Also add cleanup to the activity lifecycle, such as at onDestroy()
-~~~~
-mobileDataPlanClient?.close()
-~~~~
+
+  ~~~~
+  mobileDataPlanClient?.close()
+  ~~~~
 
 This project uses the Gradle build system. To build this project, use the
 `gradlew build` command or use "Import Project" in Android Studio.
@@ -86,6 +89,7 @@ For more resources on learning Android development, visit the
 
 The subgraph_sdk_sample will have this setup already. Subgraph SDK will be in
 the google() repository:
+
 ~~~~
     repositories {
         google()
@@ -94,6 +98,7 @@ the google() repository:
 ~~~~
 
 In your app directory's build.gradle, add to the dependencies this line:
+
 ~~~~
 dependencies {
   implementation 'com.google.android.libraries.cloud.telco.subgraph:cloud_telco_subgraph:0.5.1'
