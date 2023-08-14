@@ -33,15 +33,15 @@ com.google.samples.quickstart.subgraph_sdk_sample
 
 
 1. This activity will have a data payload that was sent by the NotifyUser RPC.
-  Details on how to send the RPC will be provided at a later time. Be sure the
-  activity launch mode allows for a completely new intent to be delivered to
-  onCreate() and onNewIntent(). Once the new intent arrives, the following
+   Details on how to send the RPC will be provided at a later time. Be sure the
+   activity launch mode allows for a completely new intent to be delivered to
+   onCreate() and onNewIntent(). Once the new intent arrives, the following
 
-  ~~~~
-  var parsedIntent = Subgraph.fromIntent(intent)
-  ~~~~
+   ~~~~
+   var parsedIntent = Subgraph.fromIntent(intent)
+   ~~~~
 
-  is a helper function that will parse out the contents for use in the app.
+   is a helper function that will parse out the contents for use in the app.
 
 1. Obtain an instance of the MobileDataPlanClient from Subgraph.
    See the example in [MainActivity.kt](https://github.com/googlesamples/subgraph_sdk_sample/blob/main/app/src/main/java/com/google/samples/quickstart/subgraph_sdk_sample/MainActivity.kt).
@@ -91,10 +91,10 @@ The subgraph_sdk_sample will have this setup already. Subgraph SDK will be in
 the google() repository:
 
 ~~~~
-    repositories {
-        google()
-        // ...
-    }
+repositories {
+  google()
+  // ...
+}
 ~~~~
 
 In your app directory's build.gradle, add to the dependencies this line:
