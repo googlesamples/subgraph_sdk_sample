@@ -1,6 +1,11 @@
 Subgraph SDK Sample Release Notes
 =================================
 
+Version 0.5.2
+-------------
+- Internal SDK Intent action rename. Clients should upgrade to continue
+  to receive notification messages.
+
 Version 0.5.1
 -------------
 - SDK now receives Carrier Plan ID updates upon change. New return type for

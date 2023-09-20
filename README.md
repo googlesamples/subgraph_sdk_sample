@@ -101,7 +101,7 @@ In your app directory's build.gradle, add to the dependencies this line:
 
 ~~~~
 dependencies {
-  implementation 'com.google.android.libraries.cloud.telco.subgraph:cloud_telco_subgraph:0.5.1'
+  implementation 'com.google.android.libraries.cloud.telco.subgraph:cloud_telco_subgraph:0.5.2'
 }
 ~~~~
 

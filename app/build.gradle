@@ -68,7 +68,7 @@ android {
 
 
 dependencies {
-    implementation 'com.google.android.libraries.cloud.telco.subgraph:cloud_telco_subgraph:0.5.1'
+    implementation 'com.google.android.libraries.cloud.telco.subgraph:cloud_telco_subgraph:0.5.2'
     implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
 
     implementation 'androidx.core:core-ktx:1.9.0'
