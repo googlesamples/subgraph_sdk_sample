@@ -78,6 +78,14 @@ com.google.samples.quickstart.subgraph_sdk_sample
    mobileDataPlanClient?.close()
    ~~~~
 
+1. The notification importance level is set to "HIGH_IMPORTANCE". This setting
+   requires manual permissions to be granted from the user. Enable, by going to
+
+   Settings --> Notifications --> All Apps --> (your application name) -->
+   All (your application name) notifications.
+
+   Set them all to enabled. This is done once per installation.
+
 This project uses the Gradle build system. To build this project, use the
 `gradlew build` command or use "Import Project" in Android Studio.
 
