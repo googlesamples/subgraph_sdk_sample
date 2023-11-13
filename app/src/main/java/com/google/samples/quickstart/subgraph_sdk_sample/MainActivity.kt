@@ -89,6 +89,18 @@ class MainActivity : AppCompatActivity() {
     }
   }
 
+  override fun onResume() {
+    super.onResume()
+    // This is required to receive notifications. Be sure to also enable app's notifictions in
+    // Android settings to allow notifications.
+    mobileDataPlanClient?.resumeNotifications();
+  }
+
+  override fun onPause() {
+    super.onPause()
+    mobileDataPlanClient?.stopNotifications();
+  }
+
   private fun getClientSetup(context: Context, i: SubgraphNotificationIntent) {
     ioscope.launch {
       // The call getCpid() should run in the background. Post the future results to the UI thread.

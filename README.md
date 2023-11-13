@@ -86,6 +86,23 @@ com.google.samples.quickstart.subgraph_sdk_sample
 
    Set them all to enabled. This is done once per installation.
 
+1. Call "resumeNotifications()" to receive notifications. Also be sure to enable
+   notifications in settings. By default, no notifications will be displayed.
+
+   It is possible to resume and stop notifications. This can be tied to the
+   application or service lifecycles.
+
+   The following return a Future, but should be run in a background thread
+   wait for completion if that is important for the app design.
+
+   ~~~
+   // onResume(), logIn(), etc.
+   mobileDataPlanClient?.resumeNotifications();
+
+   // onPause(), logOut(), etc.
+   mobileDataPlanClient?.stopNotifications();
+   ~~~
+
 This project uses the Gradle build system. To build this project, use the
 `gradlew build` command or use "Import Project" in Android Studio.
 
@@ -109,7 +126,7 @@ In your app directory's build.gradle, add to the dependencies this line:
 
 ~~~~
 dependencies {
-  implementation 'com.google.android.libraries.cloud.telco.subgraph:cloud_telco_subgraph:0.5.2'
+  implementation 'com.google.android.libraries.cloud.telco.subgraph:cloud_telco_subgraph:0.5.3'
 }
 ~~~~
 
