@@ -42,7 +42,6 @@ import com.google.android.libraries.cloud.telco.subgraph.api.DataPlanIdentifier
 import com.google.android.libraries.cloud.telco.subgraph.api.MobileDataPlanClient
 import com.google.android.libraries.cloud.telco.subgraph.api.Subgraph
 import com.google.android.libraries.cloud.telco.subgraph.api.SubgraphNotificationIntent
-import com.google.android.libraries.cloud.telco.subgraph.impl.MobileDataPlanClientImpl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -93,12 +92,12 @@ class MainActivity : AppCompatActivity() {
     super.onResume()
     // This is required to receive notifications. Be sure to also enable app's notifictions in
     // Android settings to allow notifications.
-    mobileDataPlanClient?.resumeNotifications();
+    mobileDataPlanClient?.resumeNotifications()
   }
 
   override fun onPause() {
     super.onPause()
-    mobileDataPlanClient?.stopNotifications();
+    mobileDataPlanClient?.stopNotifications()
   }
 
   private fun getClientSetup(context: Context, i: SubgraphNotificationIntent) {
@@ -115,8 +114,13 @@ class MainActivity : AppCompatActivity() {
           toastToUiThread(context, "Did not receive a CPID yet.")
           return@launch
         }
-        toastToUiThread(context, "Cpid received: " + dataPlanIdentifier.cpid() +
-                       ", UpdateTime: " + dataPlanIdentifier.updateTime())
+        toastToUiThread(
+          context,
+          "Cpid received: " +
+            dataPlanIdentifier.cpid() +
+            ", UpdateTime: " +
+            dataPlanIdentifier.updateTime()
+        )
       } catch (ise: IllegalStateException) {
         ise.printStackTrace()
       }
@@ -129,7 +133,7 @@ class MainActivity : AppCompatActivity() {
     }
   }
 
-  override fun onNewIntent(intent: Intent?) {
+  override fun onNewIntent(intent: Intent) {
     super.onNewIntent(intent)
   }
 

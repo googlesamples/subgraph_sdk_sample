@@ -1,6 +1,12 @@
 Subgraph SDK Sample Release Notes
 =================================
 
+Version 0.5.4
+-------------
+- Fixed a bug routing notifications to Activities with the category DEFAULT.
+  Updated sample AndroidManifest.xml to indicate mimeType is required if using
+  DEFAULT.
+
 Version 0.5.2
 -------------
 - Internal SDK Intent action rename. Clients should upgrade to continue
