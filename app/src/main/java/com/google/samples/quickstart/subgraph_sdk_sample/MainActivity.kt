@@ -32,12 +32,17 @@
  */
 package com.google.samples.quickstart.subgraph_sdk_sample
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.android.libraries.cloud.telco.subgraph.api.DataPlanIdentifier
 import com.google.android.libraries.cloud.telco.subgraph.api.MobileDataPlanClient
 import com.google.android.libraries.cloud.telco.subgraph.api.Subgraph
@@ -57,6 +62,40 @@ class MainActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
 
+    // Ask the user for permissions to post notifications. Please visit for more information:
+    // https://developer.android.com/training/permissions/requesting#request-permission
+    val requestPermissionLauncher =
+      registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+        if (isGranted) {
+          // Permission is granted. Continue the action or workflow in your app.
+        } else {
+          // Explain to the user that the feature is unavailable because the feature requires a
+          // permission that the user has denied.
+        }
+      }
+
+    when {
+      ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+        PackageManager.PERMISSION_GRANTED -> {
+        // You can use the API that requires the POST_NOTIFICATIONS permission.
+      }
+      ActivityCompat.shouldShowRequestPermissionRationale(
+        this,
+        Manifest.permission.POST_NOTIFICATIONS,
+      ) -> {
+        // In an educational UI, explain to the user why your app requires this
+        // permission for a specific feature to behave as expected, and what
+        // features are disabled if it's declined.
+        // showInContextUI()
+      }
+      else -> {
+        // You can directly ask for the permission.
+        // The registered ActivityResultCallback gets the result of this request.
+        requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+      }
+    }
+
+    // Main UI for this Activity:
     findViewById<View>(R.id.api_button).setOnClickListener {
       // Simplified code. The SubgraphNotificationIntent parser will throw
       // IllegalArgumentException. Intents with values are delivered on a fresh Activity
@@ -70,7 +109,7 @@ class MainActivity : AppCompatActivity() {
             "Intent Action: %s, Content-Type: %s, Payload as String: %s",
             i.action(),
             i.contentType(),
-            i.payload()
+            i.payload(),
           )
         // Do something with the Third Party Notification intent action, content-type, and
         // payload
@@ -119,7 +158,7 @@ class MainActivity : AppCompatActivity() {
           "Cpid received: " +
             dataPlanIdentifier.cpid() +
             ", UpdateTime: " +
-            dataPlanIdentifier.updateTime()
+            dataPlanIdentifier.updateTime(),
         )
       } catch (ise: IllegalStateException) {
         ise.printStackTrace()

@@ -6,6 +6,9 @@ Version 0.5.4
 - Fixed a bug routing notifications to Activities with the category DEFAULT.
   Updated sample AndroidManifest.xml to indicate mimeType is required if using
   DEFAULT.
+- Additional notes on how to ask the user for POST_NOTIFICATIONS permissions.
+- Feature was added for pausing and resuming Notifications. This feature is
+  still subject to the OS settings value.
 
 Version 0.5.2
 -------------

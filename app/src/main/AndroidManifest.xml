@@ -44,10 +44,11 @@ the License.
         android:launchMode="singleTask">
         <activity android:name=".MainActivity" android:exported="true">
             <!-- Custom Intent Action. The launch mode must be compatible with getting new Intent
-                messages. If not a launcher activity, content mimeType is also required. -->
+                messages. If using a DEFAULT category activity, content mimeType is also required,
+                and a second activity should be created for routing the notification there. -->
             <intent-filter>
                 <action android:name="com.google.samples.quickstart.subgraph_sdk_sample.CUSTOM_INTENT_ACTION" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
                 <data android:mimeType="application/json"/>
             </intent-filter>
             <intent-filter>

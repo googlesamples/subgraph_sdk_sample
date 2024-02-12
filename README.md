@@ -78,13 +78,19 @@ com.google.samples.quickstart.subgraph_sdk_sample
    mobileDataPlanClient?.close()
    ~~~~
 
-1. The notification importance level is set to "HIGH_IMPORTANCE". This setting
-   requires manual permissions to be granted from the user. Enable, by going to
+1. The notification importance level is set to "HIGH_IMPORTANCE". Ask the user
+   for permission:
+   https://developer.android.com/training/permissions/requesting#request-permission
+
+   If the permission for POST_NOTIFICATIONS is already disabled, display a UI
+   explaining why the feature is useful, then ask the user to enable it if the
+   feature is useful to them. The notifications UI for the system, is located
+   here:
 
    Settings --> Notifications --> All Apps --> (your application name) -->
    All (your application name) notifications.
 
-   Set them all to enabled. This is done once per installation.
+   Set them all to enabled.
 
 1. Call "resumeNotifications()" to receive notifications. Also be sure to enable
    notifications in settings. By default, no notifications will be displayed.
