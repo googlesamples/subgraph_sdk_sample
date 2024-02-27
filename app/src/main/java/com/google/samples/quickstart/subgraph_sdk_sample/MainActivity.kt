@@ -62,6 +62,9 @@ class MainActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
 
+    // Create a new client without a SubgraphNotificationIntent, as no SIM ID is known yet.
+    getClientSetup(applicationContext, null);
+
     // Ask the user for permissions to post notifications. Please visit for more information:
     // https://developer.android.com/training/permissions/requesting#request-permission
     val requestPermissionLauncher =
@@ -139,13 +142,18 @@ class MainActivity : AppCompatActivity() {
     mobileDataPlanClient?.stopNotifications()
   }
 
-  private fun getClientSetup(context: Context, i: SubgraphNotificationIntent) {
+  private fun getClientSetup(context: Context, i: SubgraphNotificationIntent?) {
     ioscope.launch {
       // The call getCpid() should run in the background. Post the future results to the UI thread.
       // Consider Guava's ListenableFuture for an onSuccess callback, depending on app design.
       try {
         // Create a MobileDataPlan client with the Subgraph Interface. The SIM ID should be real,
         // from a source like the SubgraphNotificationIntent or SubscriptionManager.
+        if (i == null) {
+          mobileDataPlanClient = Subgraph.newMobileDataPlanClient(context, "")
+          return@launch
+        }
+
         mobileDataPlanClient = Subgraph.newMobileDataPlanClient(context, i.simId())
 
         var dataPlanIdentifier: DataPlanIdentifier? = mobileDataPlanClient?.cpid

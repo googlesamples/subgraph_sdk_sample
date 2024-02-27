@@ -48,7 +48,7 @@ the License.
                 and a second activity should be created for routing the notification there. -->
             <intent-filter>
                 <action android:name="com.google.samples.quickstart.subgraph_sdk_sample.CUSTOM_INTENT_ACTION" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="application/json"/>
             </intent-filter>
             <intent-filter>
