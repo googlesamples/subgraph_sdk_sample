@@ -1,6 +1,11 @@
 Subgraph SDK Sample Release Notes
 =================================
 
+Version 0.5.5
+-------------
+- Fixed potential race condition when the app notification is sent before system
+  registers the app notification target.
+
 Version 0.5.4
 -------------
 - Fixed a bug routing notifications to Activities with the category DEFAULT.

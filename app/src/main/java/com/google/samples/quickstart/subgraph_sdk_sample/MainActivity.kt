@@ -139,7 +139,9 @@ class MainActivity : AppCompatActivity() {
 
   override fun onPause() {
     super.onPause()
-    mobileDataPlanClient?.stopNotifications()
+    // stopNotifications() API usage example. Uncomment to ONLY allow notifications while the app is
+    // in the foreground.
+    // mobileDataPlanClient?.stopNotifications()
   }
 
   private fun getClientSetup(context: Context, i: SubgraphNotificationIntent?) {
